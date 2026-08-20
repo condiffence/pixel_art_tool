@@ -3,7 +3,10 @@
  */
 
 // 1. 静态导入核心模块 (避免高频触发时的动态 import 开销)
-import { initWebGL, renderPixelated, exportImage, resizeCanvas } from './gl/renderer.js';
+// 1. 静态导入核心模块 (新增 renderConfig)
+import {invalidateImageCache, initWebGL, renderPixelated, exportImage, resizeCanvas, renderConfig } from './gl/renderer.js';
+
+
 
 // 2. 获取 DOM 元素
 const canvas = document.getElementById('gl-canvas');
@@ -13,6 +16,7 @@ const pixelSizeValue = document.getElementById('pixelSizeValue');
 const exportBtn = document.getElementById('exportBtn');
 const placeholder = document.getElementById('placeholder');
 const previewArea = document.querySelector('.preview-area');
+const mipmapToggleBtn = document.getElementById('mipmapToggleBtn'); 
 
 // 新增：导出分辨率控制滑块
 const exportScaleSlider = document.getElementById('exportScale'); 
@@ -99,6 +103,34 @@ function bindEvents() {
         // 直接调用静态导入的函数
         exportImage(canvas.width, canvas.height);
     });
+
+    if (mipmapToggleBtn) {
+        mipmapToggleBtn.addEventListener('click', () => {
+            // 1. 切换全局渲染配置
+            renderConfig.enableMipmap = !renderConfig.enableMipmap;
+            state.enableMipmap = renderConfig.enableMipmap;
+
+            // 2. 更新按钮 UI 样式
+            updateMipmapBtnUI();
+
+            // 3. 【核心】：如果当前已有图片，清除缓存并强制重新渲染
+            if (state.image && state.isReady) {
+                invalidateImageCache(); // 告诉渲染器：图片变了，需要重新走上传逻辑
+                renderPixelated(state.image, state.pixelSize); // 触发重新渲染
+            }
+        });
+    }
+}
+
+function updateMipmapBtnUI() {
+    if (!mipmapToggleBtn) return;
+    if (state.enableMipmap) {
+        mipmapToggleBtn.classList.add('active');
+        mipmapToggleBtn.textContent = '线性过滤: ON';
+    } else {
+        mipmapToggleBtn.classList.remove('active');
+        mipmapToggleBtn.textContent = '线性过滤: OFF';
+    }
 }
 // 7. 图片加载逻辑
 function loadImage(file) {

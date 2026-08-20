@@ -26,7 +26,12 @@
                 <input type="range" id="pixelSize" min="2" max="64" value="8">
             </div>
 
-            
+            <!-- 3. Mipmap 开关 (新增) -->
+            <div class="control-group">
+                <button id="mipmapToggleBtn" class="toggle-btn active">
+                    线性过滤: ON
+                </button>
+            </div>
 
             <!-- 4. 导出分辨率控制 -->
             <div class="control-group">
@@ -43,7 +48,7 @@
             
             <p class="hint">
                 提示：拖动滑块可实时预览像素化效果。<br>
-                放大预览可查看像素细节，导出倍率决定最终图片的物理像素大小。
+                开启 Mipmap 可改善缩放时的锯齿与摩尔纹。
             </p>
         </aside>
 

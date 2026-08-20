@@ -201,3 +201,27 @@ button:disabled {
         flex: 1;
     }
 }
+
+/* Mipmap 切换按钮样式 */
+.toggle-btn {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #3838c9;
+    border-radius: 6px;
+    background-color: #6e4fd4;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+/* 激活状态 */
+.toggle-btn.active {
+    background-color: #4caf50; /* 绿色表示开启 */
+    color: white;
+    border-color: #45a049;
+}
+
+/* 鼠标悬停效果 */
+.toggle-btn:hover {
+    opacity: 0.9;
+}

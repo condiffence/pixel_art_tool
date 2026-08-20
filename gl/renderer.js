@@ -4,6 +4,19 @@
 import { ShaderProgram } from './program.js';
 import { Framebuffer } from './fbo.js';
 
+// 全局配置或状态对象
+export const renderConfig = {
+    enableMipmap: true  // 默认开启
+};
+
+/**
+ * 强制下一帧重新上传纹理到 GPU
+ * 用于：切换 Mipmap 开关、修改纹理参数等不需要换图但需要刷新 GPU 状态的场景
+ */
+export function invalidateImageCache() {
+    currentImageSrc = null; 
+}
+
 let gl, program, fbo, imageTexture;
 let quadVAO; // 全局复用的 VAO
 let canvasWidth, canvasHeight;
@@ -38,6 +51,7 @@ export async function initWebGL(canvas) {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 
+    gl.generateMipmap(gl.TEXTURE_2D); 
     // 【优化】全局只创建一次全屏矩形 VAO
     quadVAO = createQuadVAO(gl, program);
 }
@@ -100,15 +114,33 @@ export function renderPixelated(image, pixelSize) {
     currentPixelSize = pixelSize;
     const isImageChanged = currentImageSrc !== image.src;
     
-    // 1. 仅在图片源改变时上传纹理到 GPU
-    if (isImageChanged) {
+   // 1. 仅在图片源改变时上传纹理到 GPU
+   if (isImageChanged) {
         currentImage = image;
         currentImageSrc = image.src;
+
         gl.bindTexture(gl.TEXTURE_2D, imageTexture);
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true); 
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-    }
 
+        // 【核心】根据状态决定是否生成 Mipmap
+        if (renderConfig.enableMipmap) {
+            gl.generateMipmap(gl.TEXTURE_2D);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+        } else {
+            // 如果关闭 Mipmap，缩小过滤必须退回普通的 LINEAR
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        }
+
+        // 放大过滤不受 Mipmap 影响
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false); 
+        gl.bindTexture(gl.TEXTURE_2D, null);
+    }
+    
     // 2. 基于原图尺寸计算 FBO 目标尺寸 (保持绝对比例)
     const fboWidth = Math.max(2, Math.floor(image.naturalWidth / pixelSize));
     const fboHeight = Math.max(2, Math.floor(image.naturalHeight / pixelSize));
