@@ -1,0 +1,58 @@
+# --- 操作系统生成的文件 (必须忽略) ---
+# macOS (非常常见，特别是你截图里的路径显示你在用 Mac)
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+
+# --- 编辑器与 IDE 配置文件 (建议忽略) ---
+# VS Code (截图看起来像 VS Code)
+.vscode/
+# 除了 settings.json 如果你想共享项目设置的话，通常全忽略
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# JetBrains (WebStorm, IntelliJ 等)
+.idea/
+
+
+# --- 你的 AI 辅助工具 (根据截图) ---
+# 截图顶部显示了 .continue/prompts
+# 如果这些 prompts 包含你的私有逻辑或 API Key，建议忽略
+# 如果是通用的项目提示词想分享给别人，可以保留
+.continue/
+
+
+# --- 前端项目通用依赖与构建产物 ---
+# 即使现在没用 npm，以后可能会加
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# 常见的打包输出目录 (如果有 dist 或 build 文件夹)
+dist/
+build/
+coverage/
+
+
+# --- 其他可能产生的临时文件 ---
+# 某些图片处理软件或系统产生的缩略图
+__MACOSX/
+
+# 环境变量文件 (如果未来涉及 API Key)
+.env
+.env.local
+.env.*.local

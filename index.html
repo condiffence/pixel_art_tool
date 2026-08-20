@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebGL 像素化渲染工具</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 左侧控制面板 -->
+        <aside class="control-panel">
+            <h2>WebGL 像素化</h2>
+            
+            <!-- 1. 图片输入 -->
+            <div class="control-group">
+                <label for="imageInput">选择图片</label>
+                <input type="file" id="imageInput" accept="image/*">
+            </div>
+
+            <!-- 2. 像素化粒度控制 -->
+            <div class="control-group">
+                <label for="pixelSize">
+                    像素块大小: <span id="pixelSizeValue">8</span>px
+                </label>
+                <input type="range" id="pixelSize" min="2" max="64" value="8">
+            </div>
+
+            
+
+            <!-- 4. 导出分辨率控制 -->
+            <div class="control-group">
+                <label for="exportScale">
+                    导出分辨率倍率: <span id="exportScaleValue">1.0</span>x
+                </label>
+                <input type="range" id="exportScale" min="0.5" max="4.0" step="0.1" value="1.0">
+            </div>
+
+            <!-- 5. 导出按钮 -->
+            <div class="control-group">
+                <button id="exportBtn" disabled>导出并下载 PNG</button>
+            </div>
+            
+            <p class="hint">
+                提示：拖动滑块可实时预览像素化效果。<br>
+                放大预览可查看像素细节，导出倍率决定最终图片的物理像素大小。
+            </p>
+        </aside>
+
+        <!-- 右侧预览区域 -->
+        <main class="preview-area">
+            <canvas id="gl-canvas"></canvas>
+            <div id="placeholder" class="placeholder">
+                点击左侧按钮或拖拽图片到此处<br>开始像素化创作
+            </div>
+        </main>
+    </div>
+
+    <!-- 引入主逻辑，必须使用 type="module" 以支持 ES6 导入 -->
+    <script type="module" src="main.js"></script>
+</body>
+</html>

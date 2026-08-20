@@ -1,0 +1,203 @@
+/* 1. 全局重置与基础变量 */
+:root {
+    --bg-dark: #181818;
+    --panel-bg: #242424;
+    --border-color: #333;
+    --text-primary: #eee;
+    --text-secondary: #aaa;
+    --accent-color: #4caf50;
+    --accent-hover: #45a049;
+    --btn-bg: #3a3a3a;
+    --btn-hover: #4a4a4a;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* 2. 整体布局容器 */
+.app-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+/* 3. 左侧控制面板 */
+.control-panel {
+    width: 320px;
+    min-width: 320px;
+    background-color: var(--panel-bg);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    border-right: 1px solid var(--border-color);
+    overflow-y: auto;
+}
+
+.control-panel h2 {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.control-group label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: space-between;
+}
+
+/* 文件选择器样式美化 */
+input[type="file"] {
+    background: var(--btn-bg);
+    border: 1px solid var(--border-color);
+    padding: 10px;
+    border-radius: 6px;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+input[type="file"]:hover {
+    background: var(--btn-hover);
+}
+
+/* 滑块样式 */
+input[type="range"] {
+    width: 100%;
+    cursor: pointer;
+    accent-color: var(--accent-color);
+}
+
+/* 按钮通用样式 */
+button {
+    padding: 12px;
+    background-color: var(--btn-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+button:hover:not(:disabled) {
+    background-color: var(--btn-hover);
+    border-color: #555;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* 导出按钮特殊高亮 */
+#exportBtn {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    font-weight: bold;
+    margin-top: 10px;
+}
+#exportBtn:hover:not(:disabled) {
+    background-color: var(--accent-hover);
+}
+
+/* 缩放控制组 */
+.zoom-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.zoom-controls button {
+    flex: 1;
+    font-size: 1.2rem;
+    padding: 8px 0;
+}
+.zoom-value {
+    min-width: 50px;
+    text-align: center;
+    font-weight: bold;
+    color: var(--accent-color);
+}
+
+.hint {
+    margin-top: auto;
+    font-size: 0.8rem;
+    color: #666;
+    line-height: 1.5;
+}
+
+/* 4. 右侧预览区域 (核心：解决拉伸问题) */
+.preview-area {
+    flex: 1;
+    display: flex;
+    align-items: center;     /* 垂直居中 */
+    justify-content: center; /* 水平居中 */
+    position: relative;
+    background-color: #111;
+    overflow: hidden;
+}
+
+/* 画布样式 */
+#gl-canvas {
+    /* 关键：绝对不要在这里写死 width: 100% 或 height: 100% */
+    /* 宽高比完全交由 JS 中的 canvas.width/height 控制 */
+    max-width: 100%;         /* 防止超出预览区 */
+    max-height: 100%;
+    image-rendering: pixelated; /* 确保像素边缘锐利 */
+    image-rendering: crisp-edges; /* 兼容部分浏览器 */
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+}
+
+/* 占位提示 */
+.placeholder {
+    position: absolute;
+    color: #555;
+    font-size: 1.2rem;
+    pointer-events: none;
+    user-select: none;
+    text-align: center;
+    padding: 20px;
+}
+
+/* 5. 响应式适配 (移动端/小屏幕) */
+@media (max-width: 768px) {
+    .app-container {
+        flex-direction: column;
+    }
+    .control-panel {
+        width: 100%;
+        min-width: unset;
+        height: 220px;
+        min-height: 220px;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        flex-direction: row;
+        flex-wrap: wrap;
+        padding: 16px;
+        gap: 16px;
+    }
+    .control-group {
+        flex: 1;
+        min-width: 150px;
+    }
+    .preview-area {
+        flex: 1;
+    }
+}
